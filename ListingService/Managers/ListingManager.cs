@@ -8,7 +8,6 @@ namespace ListingService.Managers
     {
         public EbayProduct MapItemToEbayProduct(Item item)
         {
-
             return new EbayProduct();
         }
     }

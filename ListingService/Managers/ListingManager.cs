@@ -6,9 +6,9 @@ namespace ListingService.Managers
 {
     public class ListingManager
     {
-        public EbayProduct MapItemToEbayProduct(Item item)
+        public EbayInventoryItem MapItemToEbayProduct(Item item)
         {
-            return new EbayProduct();
+            return new EbayInventoryItem();
         }
     }
 }

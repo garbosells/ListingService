@@ -17,6 +17,7 @@ namespace ListingService.Models.EbayClasses
             this.condition = 3000; //default to "Excellent" condition for now
             this.product = new Product();
             product.AddAspects(aspects, item.attributes);
+            product.SetTitle(item.shortDescription);
         }
     }
 }

@@ -18,6 +18,11 @@ namespace ListingService.Models.EbayClasses
             this.aspects = new Dictionary<string, string[]>();
         }
 
+        public void SetTitle(string title)
+        {
+            this.title = title;
+        }
+
         public void AddAspects(List<Aspect> aspects, List<ItemAttribute> attributes)
         {
             aspects.ForEach(a =>

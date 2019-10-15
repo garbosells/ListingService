@@ -9,6 +9,8 @@ namespace ListingService.Database
 
         [Column("aspect_id")]
         public long aspectId { get; set; }
+        [Column("aspect_name")]
+        public string aspectName { get; set; }
         [Column("garbosells_subcategory_attribute_id")]
         public long? garbosellsSubcategoryAttributeId { get; set; }
         [Column("use_default")]

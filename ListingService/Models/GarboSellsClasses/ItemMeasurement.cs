@@ -48,5 +48,6 @@
             this.itemMeasurementId = itemMeasurementId;
             this.itemMeasurementValue = itemMeasurementValue;
         }
+        public ItemMeasurement() { }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GarboSellsClasses.Models;
 using ListingService.Database;
+using ListingService.Models.EbayClasses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,14 +26,20 @@ namespace ListingService.Controllers
         }
 
         [Route("PostListing")]
-        [HttpGet]
-        public void PostListing(Item item)
+        [HttpPost]
+        public void PostListing([FromBody] Item item)
         {
-            var categories = context.categories
+            var category = context.categories
+                .Where(c => c.garboSellsSubcategoryId == item.subcategoryId)
                 .Include(c => c.categoryHasAspects)
                 .ThenInclude(c => c.aspect)
-                                .ToList();
-            var x = categories;
+                                .ToList()
+                                .FirstOrDefault();
+            var aspects = category.categoryHasAspects.Select(c => { return c.aspect;  }).ToList();
+
+            var product = new Product();
+            product.AddAspects(aspects, item.attributes);
+            var x = product;
         }
     }
 

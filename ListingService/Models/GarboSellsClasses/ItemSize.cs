@@ -33,5 +33,6 @@
             this.sizeTypeId = sizeTypeId;
             this.sizeValueId = sizeValueId;
         }
+        public ItemSize() { }
     }
 }

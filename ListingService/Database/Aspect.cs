@@ -6,6 +6,7 @@ namespace ListingService.Database
     public class Aspect
     {
         public virtual ICollection<CategoryHasAspect> categoryHasAspects { get; set; }
+        public virtual ICollection<AspectHasRecommendation> aspectHasRecommendations { get; set; }
 
         [Column("aspect_id")]
         public long aspectId { get; set; }

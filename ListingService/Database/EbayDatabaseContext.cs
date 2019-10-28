@@ -12,6 +12,10 @@ namespace ListingService.Database
         public DbSet<CategoryHasAspect> categoryHasAspects { get; set; }
         public DbSet<Aspect> aspects { get; set; }
         public DbSet<AspectHasRecommendation> aspectHasRecommendations { get; set; }
+        public DbSet<Size> sizes { get; set; }
+        public DbSet<Color> colors { get; set; }
+        public DbSet<Material> materials { get; set; }
+        public DbSet<Measurement> measurements { get; set; }
 
         public EbayDatabaseContext(IConfiguration configuration)
         {
@@ -37,6 +41,10 @@ namespace ListingService.Database
             modelBuilder.Entity<CategoryHasAspect>().ToTable("category_has_aspect");
             modelBuilder.Entity<Aspect>().ToTable("aspects");
             modelBuilder.Entity<AspectHasRecommendation>().ToTable("aspect_has_recommendation");
+            modelBuilder.Entity<Size>().ToTable("sizes");
+            modelBuilder.Entity<Color>().ToTable("colors");
+            modelBuilder.Entity<Material>().ToTable("materials");
+            modelBuilder.Entity<Measurement>().ToTable("measurements");
 
             modelBuilder.Entity<Category>().HasKey(c => new { c.garboSellsSubcategoryId, c.isVintage });
             modelBuilder.Entity<Aspect>().HasKey(a => a.aspectId);

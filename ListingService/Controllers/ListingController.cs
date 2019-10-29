@@ -35,17 +35,16 @@ namespace ListingService.Controllers
         public async Task<string> PostListingAsync([FromBody] Item item)
         {
             var ebayInventoryItem = listingManager.MapItemToEbayProduct(item);
-            var sku = Guid.NewGuid().ToString("N").ToUpper();
-            var x = await CreateEbayInventoryItem(ebayInventoryItem, sku);
+            var x = await CreateEbayInventoryItem(ebayInventoryItem);
             var y = x;
             return y.ToString();
         }
 
-        private async Task<string> CreateEbayInventoryItem(EbayInventoryItem item, string sku)
+        private async Task<string> CreateEbayInventoryItem(EbayInventoryItem item)
         {
             try
             {
-                var uri = $"https://localhost:5001/api/Listing/CreateInventoryItem?sku={sku}";
+                var uri = "https://ebayservice-test.azurewebsites.net/api/Listing/CreateInventoryItem";
                 var client = new HttpClient();
                 var result = client.PostAsJsonAsync(uri, item).Result;
                 return await result.Content.ReadAsStringAsync();

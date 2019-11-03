@@ -78,7 +78,7 @@ namespace ListingService.Managers
             measurements.ForEach(measurement =>
             {
                 var measurementTemplate = context.measurements.FirstOrDefault(m => m.Id == measurement.categoryMeasurementId);
-                measurementsDescription += $"<br />{measurementTemplate.Description} ({measurementTemplate.Hint}): {measurement.itemMeasurementValue}&#8220";
+                measurementsDescription += $"<br />{measurementTemplate.Description} {measurementTemplate.Hint}: {measurement.itemMeasurementValue}&#8220";
             });
             return measurementsDescription;
         }

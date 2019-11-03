@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GarboSellsClasses.Models;
 using ListingService.Database;
+using ListingService.Models;
 using ListingService.Models.EbayClasses;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,14 +18,14 @@ namespace ListingService.Managers
             this.context = context;
         }
 
-        public EbayInventoryItem MapItemToEbayProduct(Item item)
+        public EbayInventoryItemWrapper MapItemToEbayInventoryItem(Item item)
         {
-            var product = GenerateProduct(item);
-            var ebayInventoryItem = new EbayInventoryItem(product);
-            return ebayInventoryItem;
+            var productWrapper = GenerateProduct(item);
+            var ebayInventoryItemWrapper = new EbayInventoryItemWrapper(productWrapper);
+            return ebayInventoryItemWrapper;
         }
 
-        private Product GenerateProduct(Item item)
+        private EbayProductWrapper GenerateProduct(Item item)
         {
             var product = new Product();
             //determine if the thing is vintage
@@ -46,7 +47,10 @@ namespace ListingService.Managers
             //set description=longDescription
             product.description = GetProductDescription(item.longDescription, item.measurements);
 
-            return product;
+            return new EbayProductWrapper {
+                    product = product,
+                    ebayCategoryId = category.ebayCategoryId
+            };
         }
 
         private string GetProductDescription(string longDescription, List<ItemMeasurement> measurements)

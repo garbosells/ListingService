@@ -16,6 +16,7 @@ namespace ListingService.Database
         public DbSet<Color> colors { get; set; }
         public DbSet<Material> materials { get; set; }
         public DbSet<Measurement> measurements { get; set; }
+        public DbSet<Defaults> defaults { get; set; }
 
         public EbayDatabaseContext(IConfiguration configuration)
         {
@@ -45,6 +46,7 @@ namespace ListingService.Database
             modelBuilder.Entity<Color>().ToTable("colors");
             modelBuilder.Entity<Material>().ToTable("materials");
             modelBuilder.Entity<Measurement>().ToTable("measurements");
+            modelBuilder.Entity<Defaults>().ToTable("defaults");
 
             modelBuilder.Entity<Category>().HasKey(c => new { c.garboSellsSubcategoryId, c.isVintage });
             modelBuilder.Entity<Aspect>().HasKey(a => a.aspectId);

@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 using GarboSellsClasses.Models;
 using ListingService.Database;
 using ListingService.Managers;
+using ListingService.Models.API;
 using ListingService.Models.EbayClasses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ListingService.Controllers
 {
@@ -34,25 +36,47 @@ namespace ListingService.Controllers
         [HttpPost]
         public async Task<string> PostListingAsync([FromBody] Item item)
         {
-            var ebayInventoryItem = listingManager.MapItemToEbayProduct(item);
-            var x = await CreateEbayInventoryItem(ebayInventoryItem);
-            var y = x;
-            return y.ToString();
-        }
-
-        private async Task<string> CreateEbayInventoryItem(EbayInventoryItem item)
-        {
             try
             {
-                var uri = "https://ebayservice-test.azurewebsites.net/api/Listing/CreateInventoryItem";
+                //map to Ebay inventory item
+                var ebayInventoryItemWrapper = listingManager.MapItemToEbayInventoryItem(item);
+
+                var ebayInventoryItem = ebayInventoryItemWrapper.ebayInventoryItem;
+                var categoryId = ebayInventoryItemWrapper.ebayCategoryId;
+
+                var defaults = context.defaults.First();
+
+                var paymentPolicyId = defaults.paymentPolicyId;
+                var fulfillmentPolicyId = defaults.fulfillmentPolicyId;
+                var returnPolicyId = defaults.returnPolicyId;
+                var merchantLocationKey = defaults.merchantLocationKey;
+
+                var postListingRequest = new PostListingRequest
+                {
+                    paymentPolicyId = paymentPolicyId,
+                    fulfillmentPolicyId = fulfillmentPolicyId,
+                    returnPolicyId = returnPolicyId,
+                    categoryId = categoryId.ToString(),
+                    merchantLocationKey = merchantLocationKey,
+                    inventoryItem = ebayInventoryItem,
+                    price = "5.00"
+                };
+
+                var uri = "https://localhost:5001/api/Listing/PostListing";
                 var client = new HttpClient();
-                var result = client.PostAsJsonAsync(uri, item).Result;
-                return await result.Content.ReadAsStringAsync();
-            } catch (Exception ex)
+                client.Timeout = new TimeSpan(0, 5, 0);
+                var httpResponse = client.PostAsJsonAsync(uri, postListingRequest);
+                var response = await httpResponse.Result.Content.ReadAsStringAsync();
+                return response;
+
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }
         }
+
+
     }
 
 }

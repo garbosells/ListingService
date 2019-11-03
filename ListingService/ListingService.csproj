@@ -18,6 +18,7 @@
     <Folder Include="Models\GarboSellsClasses\" />
     <Folder Include="Models\EbayClasses\" />
     <Folder Include="Database\" />
+    <Folder Include="Models\API\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />

@@ -14,7 +14,7 @@ namespace ListingService.Models.EbayClasses
         public EbayInventoryItem(Product product)
         {
             this.availability = new Availability(1); //only offer 1 item by default
-            this.condition = "USED_VERY_GOOD"; //default to "Excellent" condition for now
+            this.condition = "USED_EXCELLENT"; 
             this.product = product;
         }
     }

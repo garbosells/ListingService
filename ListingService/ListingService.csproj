@@ -17,7 +17,7 @@
     <Folder Include="Managers\" />
     <Folder Include="Models\GarboSellsClasses\" />
     <Folder Include="Models\EbayClasses\" />
-    <Folder Include="Database\" />
+    <Folder Include="EbayDatabase\" />
     <Folder Include="Models\API\" />
   </ItemGroup>
   <ItemGroup>

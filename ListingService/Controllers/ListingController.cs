@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GarboSellsClasses.Models;
-using ListingService.Database;
+using ListingService.EbayDatabase;
 using ListingService.Managers;
 using ListingService.Models.API;
 using ListingService.Models.EbayClasses;
@@ -23,13 +23,13 @@ namespace ListingService.Controllers
     {
         private IConfiguration configuration;
         private readonly EbayDatabaseContext context;
-        private ListingManager listingManager;
+        private EbayListingManager listingManager;
 
         public ListingController(IConfiguration configuration, EbayDatabaseContext context)
         {
             this.configuration = configuration;
             this.context = context;
-            this.listingManager = new ListingManager(context);
+            this.listingManager = new EbayListingManager(context);
         }
 
         [Route("PostListing")]
@@ -51,7 +51,7 @@ namespace ListingService.Controllers
                 var returnPolicyId = defaults.returnPolicyId;
                 var merchantLocationKey = defaults.merchantLocationKey;
 
-                var postListingRequest = new PostListingRequest
+                var postListingRequest = new PostEbayListingRequest
                 {
                     paymentPolicyId = paymentPolicyId,
                     fulfillmentPolicyId = fulfillmentPolicyId,
@@ -76,6 +76,47 @@ namespace ListingService.Controllers
             }
         }
 
+        private async Task<string> PostListingToEbay([FromBody] Item item)
+        {
+            try
+            {
+                //map to Ebay inventory item
+                var ebayInventoryItemWrapper = listingManager.MapItemToEbayInventoryItem(item);
+
+                var ebayInventoryItem = ebayInventoryItemWrapper.ebayInventoryItem;
+                var categoryId = ebayInventoryItemWrapper.ebayCategoryId;
+
+                var defaults = context.defaults.First();
+
+                var paymentPolicyId = defaults.paymentPolicyId;
+                var fulfillmentPolicyId = defaults.fulfillmentPolicyId;
+                var returnPolicyId = defaults.returnPolicyId;
+                var merchantLocationKey = defaults.merchantLocationKey;
+
+                var postListingRequest = new PostEbayListingRequest
+                {
+                    paymentPolicyId = paymentPolicyId,
+                    fulfillmentPolicyId = fulfillmentPolicyId,
+                    returnPolicyId = returnPolicyId,
+                    categoryId = categoryId.ToString(),
+                    merchantLocationKey = merchantLocationKey,
+                    inventoryItem = ebayInventoryItem,
+                    price = "5.00"
+                };
+
+                var uri = "https://localhost:5001/api/Listing/PostListing";
+                var client = new HttpClient();
+                client.Timeout = new TimeSpan(0, 5, 0);
+                var httpResponse = client.PostAsJsonAsync(uri, postListingRequest);
+                var response = await httpResponse.Result.Content.ReadAsStringAsync();
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
 
     }
 

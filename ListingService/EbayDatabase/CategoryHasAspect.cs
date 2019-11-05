@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ListingService.Database
+namespace ListingService.EbayDatabase
 {
     public class CategoryHasAspect
     {

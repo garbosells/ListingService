@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ListingService.Database
+namespace ListingService.EbayDatabase
 {
     public class EbayDatabaseContext : DbContext
     {

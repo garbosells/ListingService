@@ -3,7 +3,7 @@ using ListingService.Models.EbayClasses;
 
 namespace ListingService.Models.API
 {
-    public class PostListingRequest
+    public class PostEbayListingRequest
     {
         public string categoryId { get; set; }
         public string paymentPolicyId { get; set; }
@@ -12,7 +12,7 @@ namespace ListingService.Models.API
         public string merchantLocationKey { get; set; }
         public string price;
         public EbayInventoryItem inventoryItem { get; set; }
-        public PostListingRequest()
+        public PostEbayListingRequest()
         {
         }
     }

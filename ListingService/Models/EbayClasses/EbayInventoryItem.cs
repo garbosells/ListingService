@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GarboSellsClasses.Models;
-using ListingService.Database;
+using ListingService.EbayDatabase;
 
 namespace ListingService.Models.EbayClasses
 {

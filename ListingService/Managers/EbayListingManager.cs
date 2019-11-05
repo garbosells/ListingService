@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using GarboSellsClasses.Models;
-using ListingService.Database;
+using ListingService.EbayDatabase;
 using ListingService.Models;
 using ListingService.Models.EbayClasses;
 using Microsoft.EntityFrameworkCore;
 
 namespace ListingService.Managers
 {
-    public class ListingManager
+    public class EbayListingManager
     {
         private readonly EbayDatabaseContext context;
 
-        public ListingManager(EbayDatabaseContext context)
+        public EbayListingManager(EbayDatabaseContext context)
         {
             this.context = context;
         }
@@ -47,9 +47,10 @@ namespace ListingService.Managers
             //set description=longDescription
             product.description = GetProductDescription(item.longDescription, item.measurements);
 
-            return new EbayProductWrapper {
-                    product = product,
-                    ebayCategoryId = category.ebayCategoryId
+            return new EbayProductWrapper
+            {
+                product = product,
+                ebayCategoryId = category.ebayCategoryId
             };
         }
 
@@ -61,7 +62,7 @@ namespace ListingService.Managers
                 description += GetMeasurementsText(measurements);
             }
 
-            var disclaimer = "<br /><br />PLEASE ASK ALL QUESTIONS PRIOR TO PURCHASING.<br /><br />UNLESS GREATLY MISREPRESENTED, A 10 % RESTOCKING FEE APPLIES TO ANY RETURNS." +
+            var disclaimer = "<br /><br />PLEASE ASK ALL QUESTIONS PRIOR TO PURCHASING.<br /><br />UNLESS GREATLY MISREPRESENTED, A 10% RESTOCKING FEE APPLIES TO ANY RETURNS." +
 "<br /><br />DISCLAIMER ON CLOTHING:<br />UNLESS NOTED, ALL CLOTHING IS PRE - OWNED or LIGHTLY LOVED.Special effort is made to seek out the best quality items, " +
 "but due to previous use, some flaws may exist.Flaws may include, but are not limited to a loose string(s), fading(this applies to vintage clothes), or " +
 "a small scuff. Sherman Garbo Sells makes an effort to disclose any flaws. Customer service is a top priority and questions will be answered quickly and accurately." +
@@ -78,7 +79,7 @@ namespace ListingService.Managers
             measurements.ForEach(measurement =>
             {
                 var measurementTemplate = context.measurements.FirstOrDefault(m => m.Id == measurement.categoryMeasurementId);
-                measurementsDescription += $"<br />{measurementTemplate.Description} {measurementTemplate.Hint}: {measurement.itemMeasurementValue}&#8220";
+                measurementsDescription += $"<br />{measurementTemplate.Description} {measurementTemplate.Hint}: {measurement.itemMeasurementValue}&#8243";
             });
             return measurementsDescription;
         }

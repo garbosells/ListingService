@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ListingService.Database
+namespace ListingService.EbayDatabase
 {
-    public class Material
+    public class Color
     {
-        [Column("material_id")]
+        [Column("color_id")]
         public long Id { get; set; }
-        [Column("material_description")]
+        [Column("color_description")]
         public string Description { get; set; }
     }
 }

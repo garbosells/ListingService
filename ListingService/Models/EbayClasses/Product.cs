@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using GarboSellsClasses.Models;
-using ListingService.Database;
+using ListingService.EbayDatabase;
 
 namespace ListingService.Models.EbayClasses
 {

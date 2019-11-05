@@ -8,6 +8,7 @@ namespace GarboSellsClasses.Models
     /// </summary>
     public class Item
     {
+        public string price { get; set; }
         /// <summary>
         /// The date/time when the item was originally created.
         ///

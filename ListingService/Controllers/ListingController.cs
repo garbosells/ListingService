@@ -34,49 +34,74 @@ namespace ListingService.Controllers
 
         [Route("PostListing")]
         [HttpPost]
-        public async Task<string> PostListingAsync([FromBody] Item item)
+        public PostGarboSellsListingResponse PostListing([FromBody] PostGarboSellsListingRequest request)
         {
+            var response = new PostGarboSellsListingResponse();
             try
             {
-                //map to Ebay inventory item
-                var ebayInventoryItemWrapper = listingManager.MapItemToEbayInventoryItem(item);
-
-                var ebayInventoryItem = ebayInventoryItemWrapper.ebayInventoryItem;
-                var categoryId = ebayInventoryItemWrapper.ebayCategoryId;
-
-                var defaults = context.defaults.First();
-
-                var paymentPolicyId = defaults.paymentPolicyId;
-                var fulfillmentPolicyId = defaults.fulfillmentPolicyId;
-                var returnPolicyId = defaults.returnPolicyId;
-                var merchantLocationKey = defaults.merchantLocationKey;
-
-                var postListingRequest = new PostEbayListingRequest
+                Task<PostListingResponse> ebayTask = null;
+                Task<PostListingResponse> etsyTask = null;
+                if (request.postToEbay || request.postToEtsy)
                 {
-                    paymentPolicyId = paymentPolicyId,
-                    fulfillmentPolicyId = fulfillmentPolicyId,
-                    returnPolicyId = returnPolicyId,
-                    categoryId = categoryId.ToString(),
-                    merchantLocationKey = merchantLocationKey,
-                    inventoryItem = ebayInventoryItem,
-                    price = "5.00"
-                };
+                    var tasks = new Task[] { };
+                    if (request.postToEbay)
+                    {
+                        ebayTask = PostListingToEbay(request.listing.inventoryItem);
+                        tasks.Append(ebayTask);
+                    }
+                        
+                    if (request.postToEtsy)
+                    {
+                        etsyTask = PostListingToEtsy(request.listing.inventoryItem);
+                        tasks.Append(etsyTask);
+                    }
 
-                var uri = "https://localhost:5001/api/Listing/PostListing";
-                var client = new HttpClient();
-                client.Timeout = new TimeSpan(0, 5, 0);
-                var httpResponse = client.PostAsJsonAsync(uri, postListingRequest);
-                var response = await httpResponse.Result.Content.ReadAsStringAsync();
-                return response;
+                    Task.WaitAll(tasks);
+                    
+                    if (ebayTask != null && ebayTask.IsCompleted)
+                    {
+                        response.PostEbayListingResponse = new PostListingResponse
+                        {
+                            IsSuccess = ebayTask.IsCompletedSuccessfully && ebayTask.Result.IsSuccess,
+                            ListingId = ebayTask.IsCompletedSuccessfully ? ebayTask.Result.ListingId : null,
+                            ErrorMessage = ebayTask.IsCompletedSuccessfully ? null : ebayTask.Result.ErrorMessage
+                        };
+                    }
+                    if (etsyTask != null && etsyTask.IsCompleted)
+                    {
+                        response.PostEbayListingResponse = new PostListingResponse
+                        {
+                            IsSuccess = etsyTask.IsCompletedSuccessfully && etsyTask.Result.IsSuccess,
+                            ListingId = etsyTask.IsCompletedSuccessfully ? etsyTask.Result.ListingId : null,
+                            ErrorMessage = etsyTask.IsCompletedSuccessfully ? null : etsyTask.Result.ErrorMessage
+                        };
+                    }
+                    response.IsSuccess = true;
+                    return response;
+
+                }
+                else
+                {
+                    throw new Exception("Problem with request: no marketplace selected");
+                }
 
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new PostGarboSellsListingResponse
+                {
+                    IsSuccess = false,
+                    ErrorMessage = ex.Message
+                };
             }
         }
 
-        private async Task<string> PostListingToEbay([FromBody] Item item)
+        private async Task<PostListingResponse> PostListingToEtsy(Item item)
+        {
+            return null;
+        }
+
+        private async Task<PostListingResponse> PostListingToEbay(Item item)
         {
             try
             {
@@ -101,20 +126,33 @@ namespace ListingService.Controllers
                     categoryId = categoryId.ToString(),
                     merchantLocationKey = merchantLocationKey,
                     inventoryItem = ebayInventoryItem,
-                    price = "5.00"
+                    price = item.price
                 };
 
-                var uri = "https://localhost:5001/api/Listing/PostListing";
+                var uri = "https://ebayservice-test.azurewebsites.net/api/Listing/PostListing";
+                //var uri = "https://localhost:5001/api/Listing/PostListing";
                 var client = new HttpClient();
                 client.Timeout = new TimeSpan(0, 5, 0);
                 var httpResponse = client.PostAsJsonAsync(uri, postListingRequest);
-                var response = await httpResponse.Result.Content.ReadAsStringAsync();
-                return response;
+                if(httpResponse.Result.IsSuccessStatusCode)
+                {
+                    var response = await httpResponse.Result.Content.ReadAsStringAsync();
+                    return new PostListingResponse
+                    {
+                        IsSuccess = true,
+                        ListingId = response
+                    };
+                }
+                throw new Exception("Error occurred while posting to Ebay: " + httpResponse.Result.ReasonPhrase);
 
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new PostListingResponse
+                {
+                    IsSuccess = false,
+                    ErrorMessage = ex.Message
+                };
             }
         }
 

@@ -19,6 +19,8 @@
     <Folder Include="Models\EbayClasses\" />
     <Folder Include="EbayDatabase\" />
     <Folder Include="Models\API\" />
+    <Folder Include="Models\EtsyClasses\" />
+    <Folder Include="EtsyDatabase\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />

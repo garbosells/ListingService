@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using GarboSellsClasses.Models;
 using ListingService.EbayDatabase;
+using ListingService.EtsyDatabase;
 using ListingService.Managers;
 using ListingService.Models.API;
 using ListingService.Models.EbayClasses;
@@ -22,14 +23,18 @@ namespace ListingService.Controllers
     public class ListingController : Controller
     {
         private IConfiguration configuration;
-        private readonly EbayDatabaseContext context;
-        private EbayListingManager listingManager;
+        private readonly EbayDatabaseContext ebayDbContext;
+        private readonly EtsyDatabaseContext etsyDbContext;
+        private EbayListingManager ebayListingManager;
+        private EtsyListingManager etsyListingManager;
 
-        public ListingController(IConfiguration configuration, EbayDatabaseContext context)
+        public ListingController(IConfiguration configuration, EbayDatabaseContext ebayDbContext, EtsyDatabaseContext etsyDbContext)
         {
             this.configuration = configuration;
-            this.context = context;
-            this.listingManager = new EbayListingManager(context);
+            this.ebayDbContext = ebayDbContext;
+            this.etsyDbContext = etsyDbContext;
+            this.ebayListingManager = new EbayListingManager(ebayDbContext);
+            this.etsyListingManager = new EtsyListingManager(etsyDbContext);
         }
 
         [Route("PostListing")]
@@ -98,6 +103,8 @@ namespace ListingService.Controllers
 
         private async Task<PostListingResponse> PostListingToEtsy(Item item)
         {
+            //create a draft listing object
+            //then generate post request that will be required to add attributes
             return null;
         }
 
@@ -106,12 +113,12 @@ namespace ListingService.Controllers
             try
             {
                 //map to Ebay inventory item
-                var ebayInventoryItemWrapper = listingManager.MapItemToEbayInventoryItem(item);
+                var ebayInventoryItemWrapper = ebayListingManager.MapItemToEbayInventoryItem(item);
 
                 var ebayInventoryItem = ebayInventoryItemWrapper.ebayInventoryItem;
                 var categoryId = ebayInventoryItemWrapper.ebayCategoryId;
 
-                var defaults = context.defaults.First();
+                var defaults = ebayDbContext.defaults.First();
 
                 var paymentPolicyId = defaults.paymentPolicyId;
                 var fulfillmentPolicyId = defaults.fulfillmentPolicyId;

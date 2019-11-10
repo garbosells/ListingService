@@ -28,11 +28,11 @@ namespace ListingService.EbayDatabase
 
         private string GetConnectionString()
         {
-            var server = configuration.GetValue<string>("DbConnectionInfo:Server");
-            var port = configuration.GetValue<string>("DbConnectionInfo:Port");
-            var user = configuration.GetValue<string>("DbConnectionInfo:User");
-            var pw = configuration.GetValue<string>("DbConnectionInfo:Password");
-            var database = configuration.GetValue<string>("DbConnectionInfo:Database");
+            var server = configuration.GetValue<string>("EbayDbConnectionInfo:Server");
+            var port = configuration.GetValue<string>("EbayDbConnectionInfo:Port");
+            var user = configuration.GetValue<string>("EbayDbConnectionInfo:User");
+            var pw = configuration.GetValue<string>("EbayDbConnectionInfo:Password");
+            var database = configuration.GetValue<string>("EbayDbConnectionInfo:Database");
             return $"Server={server};Port={port};User Id={user};Password={pw};Database={database};SSL Mode=Require;Trust Server Certificate=true";
         }
 

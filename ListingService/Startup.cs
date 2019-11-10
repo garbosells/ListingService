@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ListingService.EbayDatabase;
+using ListingService.EtsyDatabase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace EbayService
         {
             services.AddEntityFrameworkNpgsql()
                      .AddDbContext<EbayDatabaseContext>()
+                     .AddDbContext<EtsyDatabaseContext>()
                      .BuildServiceProvider();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

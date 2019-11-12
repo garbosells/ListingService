@@ -12,9 +12,10 @@ namespace ListingService.Models.API
             etsyAttributes = new List<EtsyAttribute>();
         }
 
-        public void AddAttribute(long attributeId, long valueId)
+        public void AddAttribute(long attributeId, long? valueId)
         {
-            etsyAttributes.Add(new EtsyAttribute { attributeId = attributeId,
+            if(valueId != null)
+                etsyAttributes.Add(new EtsyAttribute { attributeId = attributeId,
                 valueId = valueId });
         }
 
@@ -22,6 +23,6 @@ namespace ListingService.Models.API
     public class EtsyAttribute
     {
         public long attributeId { get; set; }
-        public long valueId { get; set; }
+        public long? valueId { get; set; }
     }
 }

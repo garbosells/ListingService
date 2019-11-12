@@ -94,16 +94,16 @@ namespace ListingService.Managers
                 var generalAttributes = item.generalItemAttributes;
                 if(generalAttributes.primaryColor != null)
                 {
-                    var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.primaryColor.attributeRecommendationId);
+                    var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.primaryColor.attributeRecommendationId)?.etsyColorId;
                     if (colorValue != null)
-                        result.AddAttribute(200, 0);
+                        result.AddAttribute(200, colorValue);
                 }
 
                 if (generalAttributes.secondaryColor != null)
                 {
-                    var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.secondaryColor.attributeRecommendationId);
+                    var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.secondaryColor.attributeRecommendationId)?.etsyColorId;
                     if (colorValue != null)
-                        result.AddAttribute(52047899002, 0);
+                        result.AddAttribute(52047899002, colorValue);
                 }
 
                 var attributes = item.attributes;

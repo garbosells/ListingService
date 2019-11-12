@@ -24,7 +24,7 @@ namespace ListingService.Managers
                 var isVintage = item.generalItemAttributes.era.attributeRecommendationId != 12;
                 var shippingTemplateId = context.defaults.FirstOrDefault().shippingTemplateId;
                 var category = context.categories.FirstOrDefault(c => c.isVintage == isVintage && c.garboSellsSubcategoryId == item.subcategoryId);
-                var image_id = context.categories.FirstOrDefault(c => c.etsyCategory == category.ToString()).photoId;
+                var image_id = context.categories.FirstOrDefault(c => c.etsyCategory == category.etsyCategory.ToString())?.photoId;
 
                 result = new CreateEtsyListingRequest(shippingTemplateId);
 
@@ -90,6 +90,21 @@ namespace ListingService.Managers
             try
             {
                 var result = new AddEtsyInventoryAttributesRequest();
+                var colors = context.colors;
+                var generalAttributes = item.generalItemAttributes;
+                if(generalAttributes.primaryColor != null)
+                {
+                    var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.primaryColor.attributeRecommendationId);
+                    if (colorValue != null)
+                        result.AddAttribute(200, 0);
+                }
+
+                if (generalAttributes.secondaryColor != null)
+                {
+                    var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.secondaryColor.attributeRecommendationId);
+                    if (colorValue != null)
+                        result.AddAttribute(52047899002, 0);
+                }
 
                 var attributes = item.attributes;
                 return result;

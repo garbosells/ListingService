@@ -10,6 +10,9 @@ namespace ListingService.EtsyDatabase
 
         public DbSet<Category> categories { get; set; }
         public DbSet<Defaults> defaults { get; set; }
+        public DbSet<Material> materials { get; set; }
+        public DbSet<Measurement> measurements { get; set; }
+        public DbSet<Era> eras { get; set; }
 
         public EtsyDatabaseContext(IConfiguration configuration)
         {
@@ -33,6 +36,12 @@ namespace ListingService.EtsyDatabase
         {
             modelBuilder.Entity<Category>().ToTable("categories");
             modelBuilder.Entity<Defaults>().ToTable("defaults");
+            modelBuilder.Entity<Material>().ToTable("materials");
+            modelBuilder.Entity<Measurement>().ToTable("measurements");
+            modelBuilder.Entity<Era>().ToTable("eras");
+
+            modelBuilder.Entity<Category>().HasKey(c => new { c.garboSellsSubcategoryId, c.isVintage });
+
         }
     }
 }

@@ -74,11 +74,11 @@ namespace ListingService.Controllers
                     }
                     if (etsyTask != null && etsyTask.IsCompleted)
                     {
-                        response.PostEbayListingResponse = new PostListingResponse
+                        response.PostEtsyListingResponse = new PostListingResponse
                         {
                             IsSuccess = etsyTask.IsCompletedSuccessfully && etsyTask.Result.IsSuccess,
                             ListingId = etsyTask.IsCompletedSuccessfully ? etsyTask.Result.ListingId : null,
-                            ErrorMessage = etsyTask.IsCompletedSuccessfully ? null : etsyTask.Result.ErrorMessage
+                            ErrorMessage = etsyTask.Result.ErrorMessage
                         };
                     }
                     response.IsSuccess = true;
@@ -103,9 +103,45 @@ namespace ListingService.Controllers
 
         private async Task<PostListingResponse> PostListingToEtsy(Item item)
         {
-            //create a draft listing object
-            //then generate post request that will be required to add attributes
-            return null;
+            try
+            {
+                if(item.generalItemAttributes.era.attributeRecommendationId == 12)
+                {
+                    throw new Exception("Non-vintage items are not allowed on Etsy!");
+                }
+                //create a draft listing object
+                var createListingRequest = etsyListingManager.GetEtsyListingRequest(item);
+                var addInventoryAttributesRequest = etsyListingManager.GetEtsyInventoryAttributesRequest(item, createListingRequest.taxonomy_id);
+
+                var request = new PostEtsyListingRequest
+                {
+                    createListingRequest = createListingRequest
+                };
+
+                var uri = configuration["EtsyServiceBaseUrl"] + "/api/Listing/PostListing";
+                var client = new HttpClient();
+                var httpResponse = client.PostAsJsonAsync(uri, request);
+                //then generate post request that will be required to add attributes
+                var response = await httpResponse.Result.Content.ReadAsStringAsync();
+
+                if (httpResponse.Result.IsSuccessStatusCode)
+                {
+                    return new PostListingResponse
+                    {
+                        IsSuccess = true,
+                        ListingId = response
+                    };
+                }
+                throw new Exception("Problem posting to Etsy: " + response);
+            }
+            catch (Exception ex)
+            {
+                return new PostListingResponse
+                {
+                    IsSuccess = false,
+                    ErrorMessage = ex.Message
+                };
+            }
         }
 
         private async Task<PostListingResponse> PostListingToEbay(Item item)

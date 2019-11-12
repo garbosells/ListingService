@@ -9,7 +9,9 @@ namespace ListingService.EtsyDatabase
         public long garboSellsSubcategoryId { get; set; }
         [Column("is_vintage")]
         public bool isVintage { get; set; }
-        [Column("esty_category")]
+        [Column("etsy_category")]
         public string etsyCategory { get; set; }
+        [Column("photo_id")]
+        public string photoId { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace ListingService.Managers
                 result.price = float.Parse(item.price);
                 result.materials = GetMaterials(item.generalItemAttributes.material);
                 result.when_made = GetWhenMade(item.generalItemAttributes.era);
-                    
+
             } catch (Exception ex)
             {
                 return null;
@@ -92,7 +92,13 @@ namespace ListingService.Managers
                 var result = new AddEtsyInventoryAttributesRequest();
                 var colors = context.colors;
                 var generalAttributes = item.generalItemAttributes;
-                if(generalAttributes.primaryColor != null)
+
+                if(item.size != null)
+                {
+                    result.etsyAttributes.Add(GetSize(item.size, taxonomyId));
+                }
+
+                if (generalAttributes.primaryColor != null)
                 {
                     var colorValue = colors.FirstOrDefault(c => c.garbosellsColorId == generalAttributes.primaryColor.attributeRecommendationId)?.etsyColorId;
                     if (colorValue != null)
@@ -112,8 +118,100 @@ namespace ListingService.Managers
             {
                 throw new Exception("Problem adding attributes to Etsy item: " + ex.Message);
             }
+        }
+
+        public EtsyAttribute GetSize(ItemSize size, long taxonomyid)
+        {
+            var category = context.categories.FirstOrDefault(c => c.etsyCategory == taxonomyid.ToString());
+            var result = new EtsyAttribute();
+
+            if(size.sizeTypeId == 3)
+            {
+                //one-size logic
+            }
+
+            if(size.sizeTypeId != 1 && (bool) category.usLetterSizeOnly)
+            {
+                size = MapToUSLetter(size);
+            }
+
+            var sizeType = GetSizeType(size.sizeTypeId, category);
+            var sizeValueId = GetSizeValueId(size.sizeValueId, sizeType.etsyScaleId, sizeType);
+            var scaleId = sizeType.etsyScaleId;
+            return new EtsyAttribute
+            {
+                scaleId = scaleId,
+                attributeId = long.Parse(sizeType.estyPropertyId),
+                valueId = sizeValueId
+            };
 
         }
 
+        private ItemSize MapToUSLetter(ItemSize size)
+        {
+            size.sizeTypeId = 1;
+            var sizeValueId = size.sizeValueId;
+            //XS
+            if (sizeValueId <= 9)
+            {
+                size.sizeValueId = 0;
+            }
+            //S
+            if (sizeValueId > 9 && sizeValueId <= 15)
+            {
+                size.sizeValueId = 1;
+            }
+            //M
+            if (sizeValueId > 15 && sizeValueId <= 21)
+            {
+                size.sizeValueId = 2;
+            }
+            //L
+            if (sizeValueId > 21 && sizeValueId <= 27)
+            {
+                size.sizeValueId = 3;
+            }
+            //XL
+            if (sizeValueId > 27 && sizeValueId <= 31)
+            {
+                size.sizeValueId = 4;
+            }
+            //2XL
+            if (sizeValueId > 31 && sizeValueId <= 34)
+            {
+                size.sizeValueId = 5;
+            }
+            //3XL
+            if (sizeValueId > 34)
+            {
+                size.sizeValueId = 6;
+            }
+            return size;
+        }
+
+        private SizeType GetSizeType(long garbosellsSizeTypeId, Category category)
+        {
+            var sizeType = context.sizeTypes.FirstOrDefault(s => s.garbosellsSizeTypeId == garbosellsSizeTypeId
+            && s.garbosellsSubcategoryId == category.garboSellsSubcategoryId);
+            return sizeType;
+        }
+
+        private long GetSizeValueId(long garbosellsSizeValueId, long etsyScaleId, SizeType sizeType)
+        {
+            //US Women's numeric
+            if(sizeType.garbosellsSizeTypeId == 0)
+            {
+                return context.numericSizes.FirstOrDefault(s => s.garbosellsSizeValueId == garbosellsSizeValueId).etsyUSValueId;
+            }
+
+            //UK Women's numeric
+            if(sizeType.garbosellsSizeTypeId == 2)
+            {
+                return context.numericSizes.FirstOrDefault(s => s.garbosellsSizeValueId == garbosellsSizeValueId).etsyUKValueId;
+            }
+
+            //US Letter mens/womens/unisex
+            return context.letterSizes.FirstOrDefault(s => s.garbosellsSizeValueId == garbosellsSizeValueId && s.etsyScaleId == sizeType.etsyScaleId).etsySizeValueId;
+        }
     }
 }

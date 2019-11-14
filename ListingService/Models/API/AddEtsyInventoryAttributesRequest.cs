@@ -24,5 +24,6 @@ namespace ListingService.Models.API
     {
         public long attributeId { get; set; }
         public long? valueId { get; set; }
+        public long? scaleId { get; set; }
     }
 }

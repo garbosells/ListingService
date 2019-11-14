@@ -14,6 +14,9 @@ namespace ListingService.EtsyDatabase
         public DbSet<Measurement> measurements { get; set; }
         public DbSet<Era> eras { get; set; }
         public DbSet<Color> colors { get; set; }
+        public DbSet<SizeType> sizeTypes { get; set; }
+        public DbSet<LetterSize> letterSizes { get; set; }
+        public DbSet<NumericSize> numericSizes { get; set; }
 
         public EtsyDatabaseContext(IConfiguration configuration)
         {
@@ -41,9 +44,13 @@ namespace ListingService.EtsyDatabase
             modelBuilder.Entity<Measurement>().ToTable("measurements");
             modelBuilder.Entity<Era>().ToTable("eras");
             modelBuilder.Entity<Color>().ToTable("colors");
+            modelBuilder.Entity<SizeType>().ToTable("size_types");
+            modelBuilder.Entity<LetterSize>().ToTable("letter_sizes");
+            modelBuilder.Entity<NumericSize>().ToTable("numeric_sizes");
 
             modelBuilder.Entity<Category>().HasKey(c => new { c.garboSellsSubcategoryId, c.isVintage });
-
+            modelBuilder.Entity<SizeType>().HasKey(s => new { s.garbosellsSizeTypeId, s.garbosellsSubcategoryId });
+            modelBuilder.Entity<LetterSize>().HasKey(s => new { s.letterSize, s.etsyScaleId });
         }
     }
 }

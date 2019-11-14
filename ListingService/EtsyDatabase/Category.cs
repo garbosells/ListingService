@@ -13,5 +13,7 @@ namespace ListingService.EtsyDatabase
         public string etsyCategory { get; set; }
         [Column("photo_id")]
         public string photoId { get; set; }
+        [Column("us_letter_size_only")]
+        public bool? usLetterSizeOnly { get; set; }
     }
 }

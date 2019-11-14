@@ -115,7 +115,8 @@ namespace ListingService.Controllers
 
                 var request = new PostEtsyListingRequest
                 {
-                    createListingRequest = createListingRequest
+                    createListingRequest = createListingRequest,
+                   addInventoryAttributesRequest = addInventoryAttributesRequest
                 };
 
                 var uri = configuration["EtsyServiceBaseUrl"] + "/api/Listing/PostListing";

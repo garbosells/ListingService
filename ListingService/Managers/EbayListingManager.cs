@@ -90,6 +90,11 @@ namespace ListingService.Managers
             var aspects = category.categoryHasAspects.Select(c => { return c.aspect; }).ToList();
             var productAspects = GetGeneralProductAspects(category, item);
 
+            //special case: adjustable
+            if(item.attributes.Any(a => a.subcategoryAttributeId == 1 && string.Equals("T", a.itemAttributeValue))) {
+                productAspects.Add("Features", new string[] { "Adjustable" });
+            }
+
             aspects.ForEach(aspect =>
             {
                 //aspect has a default value that should be used every time this product is generated
@@ -130,8 +135,14 @@ namespace ListingService.Managers
         {
             var aspects = new Dictionary<string, string[]>();
             //set size as an aspect using description from size_aspect_name in row
-            var size = context.sizes.FirstOrDefault(s => item.size.sizeValueId == s.Id);
-            aspects.Add(category.sizeAspectName, new string[] { size.Value });
+            if(item.size != null)
+            {
+                var size = context.sizes.FirstOrDefault(s => item.size.sizeValueId == s.Id);
+                aspects.Add(category.sizeAspectName, new string[] { size.Value });
+            }
+
+            var style = context.styles.FirstOrDefault(s => s.garbosellsSubcategoryId == item.subcategoryId);
+            aspects.Add("Style", new string[] { style.style });
 
             //'Color' aspect = primaryColor
             var color = context.colors.FirstOrDefault(c => c.Id == item.generalItemAttributes.primaryColor.attributeRecommendationId);
@@ -143,7 +154,6 @@ namespace ListingService.Managers
                 var material = context.materials.FirstOrDefault(m => m.Id == item.generalItemAttributes.material.attributeRecommendationId);
                 aspects.Add("Material", new string[] { material.Description });
             }
-
 
             //only add Vintage aspect if it is vintage
             if (category.isVintage)

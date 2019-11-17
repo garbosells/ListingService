@@ -22,7 +22,7 @@ namespace ListingService.Models.API
             who_made = "someone_else";
             is_supply = false;
             shipping_template_id = long.Parse(shippingTemplateId);
-            state = "draft"; //have to create a draft in order to edit the product and add attributes
+            state = "active"; //have to create a draft in order to edit the product and add attributes
         }
     }
 }

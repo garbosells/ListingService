@@ -178,16 +178,16 @@ namespace ListingService.Controllers
                 var client = new HttpClient();
                 client.Timeout = new TimeSpan(0, 5, 0);
                 var httpResponse = client.PostAsJsonAsync(uri, postListingRequest);
-                if(httpResponse.Result.IsSuccessStatusCode)
+                var response = await httpResponse.Result.Content.ReadAsStringAsync();
+                if (httpResponse.Result.IsSuccessStatusCode)
                 {
-                    var response = await httpResponse.Result.Content.ReadAsStringAsync();
                     return new PostListingResponse
                     {
                         IsSuccess = true,
                         ListingId = response
                     };
                 }
-                throw new Exception("Error occurred while posting to Ebay: " + httpResponse.Result.ReasonPhrase);
+                throw new Exception("Error occurred while posting to Ebay: " + httpResponse.Result.ReasonPhrase + ": " + response);
 
             }
             catch (Exception ex)

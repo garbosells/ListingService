@@ -18,6 +18,7 @@ namespace ListingService.EbayDatabase
         public DbSet<Measurement> measurements { get; set; }
         public DbSet<Defaults> defaults { get; set; }
         public DbSet<Decade> decades { get; set; }
+        public DbSet<Style> styles { get; set; }
 
         public EbayDatabaseContext(IConfiguration configuration)
         {
@@ -49,6 +50,7 @@ namespace ListingService.EbayDatabase
             modelBuilder.Entity<Measurement>().ToTable("measurements");
             modelBuilder.Entity<Defaults>().ToTable("defaults");
             modelBuilder.Entity<Decade>().ToTable("decades");
+            modelBuilder.Entity<Style>().ToTable("styles");
 
             modelBuilder.Entity<Category>().HasKey(c => new { c.garboSellsSubcategoryId, c.isVintage });
             modelBuilder.Entity<Aspect>().HasKey(a => a.aspectId);

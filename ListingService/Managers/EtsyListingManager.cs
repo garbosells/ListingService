@@ -113,6 +113,9 @@ namespace ListingService.Managers
                 }
 
                 var attributes = item.attributes;
+                var etsyAttributes = GetAttributes(attributes);
+                if (etsyAttributes.Count > 0)
+                    result.etsyAttributes.AddRange(etsyAttributes);
                 return result;
             } catch (Exception ex)
             {
@@ -212,6 +215,35 @@ namespace ListingService.Managers
 
             //US Letter mens/womens/unisex
             return context.letterSizes.FirstOrDefault(s => s.garbosellsSizeValueId == garbosellsSizeValueId && s.etsyScaleId == sizeType.etsyScaleId).etsySizeValueId;
+        }
+
+        private EtsyAttribute GetAttribute(ItemAttribute itemAttribute)
+        {
+            var etsyProperty = context.properties.FirstOrDefault(p => p.garbosellsAttributeId == itemAttribute.subcategoryAttributeId);
+            if(etsyProperty != null)
+            {
+                var etsyPropertyValue = context.propertyValues.FirstOrDefault(v => v.garbosellsRecommendationId == itemAttribute.attributeRecommendationId);
+                if (etsyPropertyValue != null)
+                    return new EtsyAttribute
+                    {
+                        attributeId = long.Parse(etsyProperty.etsyPropertyId),
+                        valueId = long.Parse(etsyPropertyValue.etsyPropertyValueId)
+                    };
+            } 
+            
+            return null;
+        }
+
+        private List<EtsyAttribute> GetAttributes(List<ItemAttribute> itemAttributes)
+        {
+            var result = new List<EtsyAttribute>();
+            foreach(var itemAttribute in itemAttributes)
+            {
+                var newAttribute = GetAttribute(itemAttribute);
+                if(newAttribute != null)
+                    result.Add(newAttribute);
+            }
+            return result;
         }
     }
 }

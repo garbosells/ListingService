@@ -17,6 +17,8 @@ namespace ListingService.EtsyDatabase
         public DbSet<SizeType> sizeTypes { get; set; }
         public DbSet<LetterSize> letterSizes { get; set; }
         public DbSet<NumericSize> numericSizes { get; set; }
+        public DbSet<Property> properties { get; set; }
+        public DbSet<PropertyValue> propertyValues { get; set; }
 
         public EtsyDatabaseContext(IConfiguration configuration)
         {
@@ -47,6 +49,8 @@ namespace ListingService.EtsyDatabase
             modelBuilder.Entity<SizeType>().ToTable("size_types");
             modelBuilder.Entity<LetterSize>().ToTable("letter_sizes");
             modelBuilder.Entity<NumericSize>().ToTable("numeric_sizes");
+            modelBuilder.Entity<Property>().ToTable("properties");
+            modelBuilder.Entity<PropertyValue>().ToTable("property_values");
 
             modelBuilder.Entity<Category>().HasKey(c => new { c.garboSellsSubcategoryId, c.isVintage });
             modelBuilder.Entity<SizeType>().HasKey(s => new { s.garbosellsSizeTypeId, s.garbosellsSubcategoryId });

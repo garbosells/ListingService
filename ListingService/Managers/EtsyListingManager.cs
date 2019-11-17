@@ -24,7 +24,7 @@ namespace ListingService.Managers
                 var isVintage = item.generalItemAttributes.era.attributeRecommendationId != 12;
                 var shippingTemplateId = context.defaults.FirstOrDefault().shippingTemplateId;
                 var category = context.categories.FirstOrDefault(c => c.isVintage == isVintage && c.garboSellsSubcategoryId == item.subcategoryId);
-                var image_id = context.categories.FirstOrDefault(c => c.etsyCategory == category.etsyCategory.ToString())?.photoId;
+                var image_id = context.categories.FirstOrDefault(c => c.garboSellsSubcategoryId == item.subcategoryId)?.photoId;
 
                 result = new CreateEtsyListingRequest(shippingTemplateId);
 

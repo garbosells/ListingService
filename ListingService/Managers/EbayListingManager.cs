@@ -149,9 +149,18 @@ namespace ListingService.Managers
             if (category.isVintage)
             {
                 aspects.Add("Vintage", new string[] { "Yes" });
+                var decade = GetDecade(item.generalItemAttributes.era.attributeRecommendationId);
+                if(!string.IsNullOrEmpty(decade))
+                    aspects.Add("Decade", new string[] { decade });
             }
 
             return aspects;
+        }
+
+        private string GetDecade(long? garbosellsEraId)
+        {
+            var decade = context.decades.FirstOrDefault(d => d.garbosellsEraId == garbosellsEraId);
+            return decade.decade;
         }
     }
 }
